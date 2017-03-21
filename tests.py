@@ -4,6 +4,12 @@ import unittest, mock, json
 import lxml.etree as ET
 
 
+class MockResponse(object):
+    def __init__(self, content, status_code=200):
+        self.content = content
+        self.status_code = status_code
+
+
 class TestGenerateRequest(unittest.TestCase):
     """
     :meth:`goat.authorities.util.generate_request` should return a callable
@@ -28,6 +34,7 @@ class TestGenerateRequest(unittest.TestCase):
         }
         glob = {"endpoint": "http://chps.asu.edu/conceptpower/rest",}
         func = generate_request(config, glob=glob)
+        mock_get.return_value = MockResponse({})
         result = func(id="testID")
 
         expected_endpoint = 'http://chps.asu.edu/conceptpower/rest/Concept'
@@ -56,6 +63,7 @@ class TestGenerateRequest(unittest.TestCase):
         }
         glob = {"endpoint": "http://chps.asu.edu/conceptpower/rest",}
         func = generate_request(config, glob=glob)
+        mock_post.return_value = MockResponse({})
         result = func(id="testID")
 
         expected_endpoint = 'http://chps.asu.edu/conceptpower/rest/Concept'
@@ -104,6 +112,7 @@ class TestGenerateRequest(unittest.TestCase):
             ]
         }
         glob = {"endpoint": "http://chps.asu.edu/conceptpower/rest",}
+        mock_get.return_value = MockResponse({})
         func = generate_request(config, glob=glob)
         try:
             result = func()
@@ -327,3 +336,7 @@ class TestJSONPath(unittest.TestCase):
         path = "data/key*/more"
         result = parse_json_path(path)(doc)
         self.assertSetEqual(set(result), set(["data", "awesome"]))
+
+
+if __name__ == '__main__':
+    unittest.main()
