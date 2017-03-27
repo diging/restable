@@ -7,7 +7,7 @@ MAINTAINER_EMAIL = 'erick.peirson@asu.edu'
 DESCRIPTION = 'Configuration-driven REST client'
 LICENSE = 'GNU GPL 3'
 URL = ''
-VERSION = '0.1.2'
+VERSION = '0.1.3'
 
 PACKAGES = ['restable']
 

@@ -86,3 +86,35 @@ class RESTManager(object):
         config = self._get_method_config(method)
         accepted = {p.get('accept', '') for p in config.get('parameters', [])}
         return all([param in accepted for param in params])
+
+    def parse(self, method, data):
+        """
+        Parse raw data as a response for ``method``.
+
+        Parameters
+        ----------
+        method : str
+            Name of a method defined in this :class:`.RestManager`\'s
+            configuration.
+        data : str
+            Raw data (e.g. JSON or XML).
+
+        Returns
+        -------
+        dict
+        """
+        config = self._get_method_config(method)
+        response_type = config.get('response', {}).get('type', 'xml').lower()
+
+        if response_type not in ['xml', 'json']:
+            raise NotImplementedError('No parser for %s' % response_type)
+
+        if response_type == 'xml':
+            parse_raw = parse_raw_xml
+            parse_path = parse_xml_path
+        elif response_type == 'json':
+            parse_raw = parse_raw_json
+            parse_path = parse_json_path
+            return parse_result(config.get('response'), parse_raw(data),
+                                parse_path, self._get_globs(),
+                                self._get_nsmap(config))
